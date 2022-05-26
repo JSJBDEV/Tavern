@@ -1,0 +1,7 @@
+{
+	"variants": {
+		"": {
+			"model": "tavern:block/bar_block"
+		}
+	}
+}

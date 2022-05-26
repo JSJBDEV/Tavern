@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "tavern",
+  "version": "${version}",
+
+  "name": "Tavern",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "authors": [
+    "Acro"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+
+  "license": "MIT",
+  "icon": "assets/modid/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "ace.actually.tavern.Tavern"
+    ],
+    "client": [
+      {
+        "value": "ace.actually.tavern.TavernClient"
+      }
+    ]
+  },
+  "mixins": [
+    "modid.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.13.3",
+    "fabric": "*",
+    "minecraft": "~1.18.2",
+    "java": ">=17"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
