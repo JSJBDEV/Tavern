@@ -26,8 +26,7 @@ public class BarBlockEntityRenderer implements BlockEntityRenderer<BarBlockEntit
         if(entity.hasDrink())
         {
             matrices.push();
-            //matrices.scale(-0.1f,-0.1f,0.1f);
-            //MinecraftClient.getInstance().textRenderer.draw(matrices,"test",1,1,1);
+
             matrices.translate(0.6,0.2,1);
             int lightAbove = WorldRenderer.getLightmapCoordinates(entity.getWorld(), entity.getPos().up());
             MinecraftClient.getInstance().getItemRenderer().renderItem(stack, ModelTransformation.Mode.GROUND, lightAbove, overlay, matrices, vertexConsumers, 0);

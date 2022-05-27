@@ -2,9 +2,12 @@ package ace.actually.tavern;
 
 import ace.actually.tavern.block.BarBlock;
 import ace.actually.tavern.block.BarBlockEntity;
+import ace.actually.tavern.block.TwentyOnesBlock;
+import ace.actually.tavern.block.TwentyOnesBlockEntity;
 import ace.actually.tavern.item.BrewItem;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.fabricmc.fabric.api.object.builder.v1.villager.VillagerProfessionBuilder;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
@@ -42,14 +45,19 @@ public class Tavern implements ModInitializer {
 	}
 
 	public static final BarBlock BAR_BLOCK = new BarBlock(AbstractBlock.Settings.of(Material.BAMBOO));
+	public static final TwentyOnesBlock TWENTY_ONES_BLOCK = new TwentyOnesBlock(AbstractBlock.Settings.of(Material.BAMBOO));
+
 	private void registerBlocks()
 	{
 		Registry.register(Registry.BLOCK,new Identifier("tavern","bar_block"),BAR_BLOCK);
+		Registry.register(Registry.BLOCK,new Identifier("tavern","twenty_ones_block"),TWENTY_ONES_BLOCK);
 	}
 
 	public static BlockEntityType<BarBlockEntity> BAR_BLOCK_ENTITY;
+	public static BlockEntityType<TwentyOnesBlockEntity> TWENTY_ONES_BLOCK_ENTITY;
 	private void registerBlockEntities()
 	{
 		BAR_BLOCK_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE,"tavern:bar_block_entity", FabricBlockEntityTypeBuilder.create(BarBlockEntity::new,BAR_BLOCK).build(null));
+		TWENTY_ONES_BLOCK_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE,"tavern:twenty_ones_entity", FabricBlockEntityTypeBuilder.create(TwentyOnesBlockEntity::new,TWENTY_ONES_BLOCK).build(null));
 	}
 }

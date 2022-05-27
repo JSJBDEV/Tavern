@@ -47,7 +47,7 @@ public class BarBlock extends Block implements BlockEntityProvider {
                         player.getInventory().getStack(i).decrement(1);
                         barBlockEntity.addEmeralds(1);
                         ItemStack brew = new ItemStack(Tavern.BEER_BREW);
-                        brew.setCustomName(new LiteralText(NameGenerator.genAlcohol()));
+                        brew.setCustomName(new LiteralText(barBlockEntity.getBrew()));
                         player.giveItemStack(brew);
                         break;
                     }
