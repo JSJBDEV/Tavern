@@ -1,5 +1,6 @@
 package ace.actually.tavern.block;
 
+import ace.actually.tavern.NameGenerator;
 import ace.actually.tavern.Tavern;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
@@ -8,6 +9,8 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -32,7 +35,7 @@ public class BarBlock extends Block implements BlockEntityProvider {
         if(hand.equals(Hand.MAIN_HAND))
         {
             BarBlockEntity barBlockEntity = (BarBlockEntity) world.getBlockEntity(pos);
-            if(!barBlockEntity.hasDrink())
+            if(!barBlockEntity.hasDrink() && player.getScoreboardTags().contains("bartender"))
             {
                 barBlockEntity.setHasDrink(true);
             }
@@ -42,7 +45,10 @@ public class BarBlock extends Block implements BlockEntityProvider {
                     if(player.getInventory().getStack(i).getItem()==Items.EMERALD)
                     {
                         player.getInventory().getStack(i).decrement(1);
-                        player.giveItemStack(new ItemStack(Tavern.BEER_BREW));
+                        barBlockEntity.addEmeralds(1);
+                        ItemStack brew = new ItemStack(Tavern.BEER_BREW);
+                        brew.setCustomName(new LiteralText(NameGenerator.genAlcohol()));
+                        player.giveItemStack(brew);
                         break;
                     }
                 }

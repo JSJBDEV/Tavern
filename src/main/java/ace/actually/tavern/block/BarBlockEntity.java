@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 public class BarBlockEntity extends BlockEntity {
 
     private boolean hasDrink = false;
+    private int emeralds = 0;
     public BarBlockEntity(BlockPos pos, BlockState state) {
         super(Tavern.BAR_BLOCK_ENTITY, pos, state);
 
@@ -24,6 +25,7 @@ public class BarBlockEntity extends BlockEntity {
     @Override
     protected void writeNbt(NbtCompound nbt) {
         nbt.putBoolean("has_drink",hasDrink);
+        nbt.putInt("emeralds",emeralds);
         super.writeNbt(nbt);
 
     }
@@ -32,6 +34,7 @@ public class BarBlockEntity extends BlockEntity {
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         hasDrink=nbt.getBoolean("has_drink");
+        emeralds=nbt.getInt("emeralds");
     }
 
     @Nullable
@@ -53,5 +56,15 @@ public class BarBlockEntity extends BlockEntity {
 
     public boolean hasDrink() {
         return hasDrink;
+    }
+
+    public int getEmeralds() {
+        return emeralds;
+    }
+
+    public void addEmeralds(int i)
+    {
+        emeralds+=i;
+        markDirty();
     }
 }

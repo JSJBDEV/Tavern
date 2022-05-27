@@ -1,9 +1,13 @@
-# Fabric Example Mod
+# Tavern
+Inspired by "Irish Pub Song - The High Kings"
 
-## Setup
+Attempting to add taverns around your minecraft world
 
-For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
+these features are planned:
+- get a job, serving players and villagers
+- overhear gossip
+- go on quests
+- play darts and 21s
+- perhaps barfight
 
-## License
 
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
