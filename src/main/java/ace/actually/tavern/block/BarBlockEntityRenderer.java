@@ -1,6 +1,7 @@
 package ace.actually.tavern.block;
 
 import ace.actually.tavern.Tavern;
+import ace.actually.tavern.Utils3f;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -38,7 +39,7 @@ public class BarBlockEntityRenderer implements BlockEntityRenderer<BarBlockEntit
         {
             matrices.push();
             matrices.translate(0,1,0.6);
-            matrices.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(0,180,0)));
+            matrices.multiply(Utils3f.v0v180v0);
             matrices.scale(-0.01f,-0.01f,0.01f);
             String[] parts = entity.getBrew().split(" ");
             for (int i = 0; i < parts.length; i++) {

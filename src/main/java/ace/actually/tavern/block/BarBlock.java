@@ -34,6 +34,7 @@ public class BarBlock extends Block implements BlockEntityProvider {
 
         if(hand.equals(Hand.MAIN_HAND))
         {
+
             BarBlockEntity barBlockEntity = (BarBlockEntity) world.getBlockEntity(pos);
             if(!barBlockEntity.hasDrink() && player.getScoreboardTags().contains("bartender"))
             {
