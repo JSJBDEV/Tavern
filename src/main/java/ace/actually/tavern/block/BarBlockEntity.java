@@ -2,10 +2,7 @@ package ace.actually.tavern.block;
 
 import ace.actually.tavern.NameGenerator;
 import ace.actually.tavern.Tavern;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.FletchingTableBlock;
-import net.minecraft.block.JukeboxBlock;
-import net.minecraft.block.NoteBlock;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.nbt.NbtCompound;
@@ -58,7 +55,9 @@ public class BarBlockEntity extends BlockEntity {
 
     public void setHasDrink(boolean hasDrink) {
         this.hasDrink = hasDrink;
+        System.out.println("has drink");
         markDirty();
+        world.updateListeners(this.pos,this.getCachedState(),this.getCachedState(), Block.NOTIFY_LISTENERS);
 
 
     }

@@ -38,10 +38,12 @@ public class Tavern implements ModInitializer {
 
 	public static final Item MUG_ITEM = new Item(new Item.Settings().group(ItemGroup.FOOD));
 	public static final BrewItem BEER_BREW = new BrewItem(new Item.Settings().group(ItemGroup.FOOD));
+	public static final Item BLANK_CARD = new Item(new Item.Settings().group(ItemGroup.MISC));
 	private void registerItems()
 	{
 		Registry.register(Registry.ITEM,new Identifier("tavern","mug"),MUG_ITEM);
 		Registry.register(Registry.ITEM,new Identifier("tavern","beer_mug"),BEER_BREW);
+		Registry.register(Registry.ITEM,new Identifier("tavern","blank_card"),BLANK_CARD);
 	}
 
 	public static final BarBlock BAR_BLOCK = new BarBlock(AbstractBlock.Settings.of(Material.BAMBOO));
