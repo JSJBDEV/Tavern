@@ -29,7 +29,11 @@ public class TwentyOnesBlock extends Block implements BlockEntityProvider {
         if(hand==Hand.MAIN_HAND)
         {
             TwentyOnesBlockEntity entity = (TwentyOnesBlockEntity) world.getBlockEntity(pos);
-            entity.count();
+            if(entity.counter!=10)
+            {
+                entity.count();
+            }
+
         }
 
         return super.onUse(state, world, pos, player, hand, hit);

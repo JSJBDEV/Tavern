@@ -11,6 +11,8 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
@@ -44,29 +46,54 @@ public class TwentyOnesBlockEntityRenderer implements BlockEntityRenderer<Twenty
     @Override
     public void render(TwentyOnesBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
 
-        renderCard(entity,matrices,"5♠",false);
+        for(NbtElement e: entity.cards)
+        {
+            NbtCompound compound = (NbtCompound) e;
+            renderCard(entity,matrices,compound);
+        }
+
 
 
     }
 
-    public void renderCard(TwentyOnesBlockEntity entity, MatrixStack matrices,String card,boolean isWestPlayer)
+    public void renderCard(TwentyOnesBlockEntity entity, MatrixStack matrices,NbtCompound compound)
     {
         matrices.push();
+        int offset = compound.getInt("offset");
+        boolean isWestPlayer = compound.getBoolean("isWest");
+        String card = compound.getString("face");
 
-        if(isWestPlayer)
+        if(compound.getBoolean("isDraw"))
         {
-            matrices.translate(lerp(0.6,0,entity.counter/10f),lerp(0.1,0.5,entity.counter/10f),lerp(0,0.4,entity.counter/10f));
-            float up = (float) lerp(1,0,entity.counter/10f)*270;
-            float round = (float) lerp(0,1,entity.counter/10f)*90;
-            matrices.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(up,round,0)));
+            if(isWestPlayer)
+            {
+                matrices.translate(0,0.5,0.4+offset);
+                matrices.multiply(Utils3f.v0v90v0);
+            }
+            else
+            {
+                matrices.translate(1,0.5,0.6+offset);
+                matrices.multiply(Utils3f.v0v270v0);
+            }
         }
         else
         {
-            matrices.translate(lerp(0.6,1,entity.counter/10f),lerp(0.1,0.5,entity.counter/10f),lerp(0,0.6,entity.counter/10f));
-            float up = (float) lerp(1,0,entity.counter/10f)*270;
-            float round = (float) lerp(0,1,entity.counter/10f)*270;
-            matrices.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(up,round,0)));
+            if(isWestPlayer)
+            {
+                matrices.translate(lerp(0.6,0,entity.counter/10f),lerp(0.1,0.5,entity.counter/10f),lerp(0,0.4+offset,entity.counter/10f));
+                float up = (float) lerp(1,0,entity.counter/10f)*270;
+                float round = (float) lerp(0,1,entity.counter/10f)*90;
+                matrices.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(up,round,0)));
+            }
+            else
+            {
+                matrices.translate(lerp(0.6,1,entity.counter/10f),lerp(0.1,0.5,entity.counter/10f),lerp(0,0.6+offset,entity.counter/10f));
+                float up = (float) lerp(1,0,entity.counter/10f)*270;
+                float round = (float) lerp(0,1,entity.counter/10f)*270;
+                matrices.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(up,round,0)));
+            }
         }
+
 
         matrices.scale(-0.01f,-0.01f,0.01f);
 
@@ -80,7 +107,11 @@ public class TwentyOnesBlockEntityRenderer implements BlockEntityRenderer<Twenty
         MinecraftClient.getInstance().textRenderer.draw(matrices,"⨆",0,-2,1);
         matrices.scale(0.3f,0.3f,0.3f);
         matrices.translate(1,2,0);
-        MinecraftClient.getInstance().textRenderer.draw(matrices,card,1,1,1);
+        if(entity.counter==10)
+        {
+            MinecraftClient.getInstance().textRenderer.draw(matrices,card,1,1,1);
+        }
+
 
         matrices.multiply(Utils3f.v0v180v0);
         matrices.scale(5,5,5);
