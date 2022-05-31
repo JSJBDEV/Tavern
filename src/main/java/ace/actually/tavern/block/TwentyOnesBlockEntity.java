@@ -8,6 +8,7 @@ import net.minecraft.util.math.BlockPos;
 
 public class TwentyOnesBlockEntity extends BlockEntity {
 
+    int counter = 0;
 
 
     public TwentyOnesBlockEntity(BlockPos pos, BlockState state) {
@@ -16,11 +17,20 @@ public class TwentyOnesBlockEntity extends BlockEntity {
 
     @Override
     protected void writeNbt(NbtCompound nbt) {
+        nbt.putInt("counter",counter);
         super.writeNbt(nbt);
+
     }
 
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
+        counter=nbt.getInt("counter");
+    }
+
+    public void count()
+    {
+        counter++;
+        markDirty();
     }
 }

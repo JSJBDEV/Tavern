@@ -26,6 +26,11 @@ public class TwentyOnesBlock extends Block implements BlockEntityProvider {
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        if(hand==Hand.MAIN_HAND)
+        {
+            TwentyOnesBlockEntity entity = (TwentyOnesBlockEntity) world.getBlockEntity(pos);
+            entity.count();
+        }
 
         return super.onUse(state, world, pos, player, hand, hit);
     }
