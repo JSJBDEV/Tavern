@@ -60,34 +60,45 @@ public class TwentyOnesBlockEntityRenderer implements BlockEntityRenderer<Twenty
     {
         matrices.push();
         int offset = compound.getInt("offset");
-        boolean isWestPlayer = compound.getBoolean("isWest");
+        int direction = compound.getInt("direction");
         String card = compound.getString("face");
 
-        if(compound.getBoolean("isDraw"))
+        if(compound.getBoolean("isDrawn"))
         {
-            if(isWestPlayer)
+            if(direction==1)
             {
                 matrices.translate(0,0.5,0.4+offset);
                 matrices.multiply(Utils3f.v0v90v0);
             }
-            else
+            else if(direction==0)
             {
                 matrices.translate(1,0.5,0.6+offset);
                 matrices.multiply(Utils3f.v0v270v0);
             }
+            else if(direction==2)
+            {
+                matrices.translate(0.6,0.5,0);
+            }
         }
         else
         {
-            if(isWestPlayer)
+            if(direction==1)
             {
                 matrices.translate(lerp(0.6,0,entity.counter/10f),lerp(0.1,0.5,entity.counter/10f),lerp(0,0.4+offset,entity.counter/10f));
                 float up = (float) lerp(1,0,entity.counter/10f)*270;
                 float round = (float) lerp(0,1,entity.counter/10f)*90;
                 matrices.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(up,round,0)));
             }
-            else
+            else if(direction==0)
             {
                 matrices.translate(lerp(0.6,1,entity.counter/10f),lerp(0.1,0.5,entity.counter/10f),lerp(0,0.6+offset,entity.counter/10f));
+                float up = (float) lerp(1,0,entity.counter/10f)*270;
+                float round = (float) lerp(0,1,entity.counter/10f)*270;
+                matrices.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(up,round,0)));
+            }
+            else if(direction==2)
+            {
+                matrices.translate(0.6,lerp(0.1,0.5,entity.counter/10f),0);
                 float up = (float) lerp(1,0,entity.counter/10f)*270;
                 float round = (float) lerp(0,1,entity.counter/10f)*270;
                 matrices.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(up,round,0)));
@@ -107,7 +118,7 @@ public class TwentyOnesBlockEntityRenderer implements BlockEntityRenderer<Twenty
         MinecraftClient.getInstance().textRenderer.draw(matrices,"⨆",0,-2,1);
         matrices.scale(0.3f,0.3f,0.3f);
         matrices.translate(1,2,0);
-        if(entity.counter==10)
+        if(compound.getBoolean("isDrawn"))
         {
             MinecraftClient.getInstance().textRenderer.draw(matrices,card,1,1,1);
         }
