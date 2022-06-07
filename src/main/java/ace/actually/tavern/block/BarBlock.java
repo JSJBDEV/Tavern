@@ -36,8 +36,22 @@ public class BarBlock extends Block implements BlockEntityProvider {
         {
 
             BarBlockEntity barBlockEntity = (BarBlockEntity) world.getBlockEntity(pos);
-            if(!barBlockEntity.hasDrink() && player.getScoreboardTags().contains("bartender"))
+            if(!barBlockEntity.hasDrink() && player.getScoreboardTags().contains(barBlockEntity.getBrew()))
             {
+                if(player.isSneaking())
+                {
+                    while (barBlockEntity.getEmeralds()>64)
+                    {
+                        player.giveItemStack(new ItemStack(Items.EMERALD,64));
+                        barBlockEntity.setEmeralds(barBlockEntity.getEmeralds()-64);
+                    }
+                    if(barBlockEntity.getEmeralds()>0)
+                    {
+                        player.giveItemStack(new ItemStack(Items.EMERALD,barBlockEntity.getEmeralds()));
+                        barBlockEntity.setEmeralds(0);
+                    }
+
+                }
                 barBlockEntity.setHasDrink(true);
             }
             else

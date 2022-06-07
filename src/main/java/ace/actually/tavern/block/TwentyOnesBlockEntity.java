@@ -5,12 +5,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtInt;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.RandomUtils;
@@ -65,25 +64,26 @@ public class TwentyOnesBlockEntity extends BlockEntity {
             be.count();
             be.markDirty();
             world.updateListeners(pos,state,state, Block.NOTIFY_LISTENERS);
-            System.out.println(be.counter);
+            //System.out.println(be.counter);
         }
     }
-    public void drawCard(int direction,int offset)
+    public void drawCard(int direction,float offset)
     {
         counter=0;
         NbtCompound card = new NbtCompound();
         card.putBoolean("isDrawn",false);
         card.putInt("direction",direction);
 
-        card.putInt("offset",offset);
-        card.putString("face","5♠");
+        card.putFloat("offset",offset);
+        card.putString("face",getRandomCard());
         cards.add(card);
         markDirty();
         world.updateListeners(this.pos,this.getCachedState(),this.getCachedState(), Block.NOTIFY_LISTENERS);
     }
 
-    public void drawCard(boolean isWest, int offset)
+    public void drawCard(boolean isWest, float offset)
     {
+
         counter=0;
         NbtCompound card = new NbtCompound();
         card.putBoolean("isDrawn",false);
@@ -96,7 +96,7 @@ public class TwentyOnesBlockEntity extends BlockEntity {
             card.putInt("direction",0);
         }
 
-        card.putInt("offset",offset);
+        card.putFloat("offset",offset);
         card.putString("face",getRandomCard());
         cards.add(card);
         markDirty();

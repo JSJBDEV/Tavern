@@ -59,6 +59,7 @@ public class TwentyOnesBlock extends BlockWithEntity {
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
 
+
         if(hand==Hand.MAIN_HAND && !world.isClient)
         {
 
@@ -67,25 +68,41 @@ public class TwentyOnesBlock extends BlockWithEntity {
             if(
                     entity.gameState.equals("NO_GAME")
                     && hit.getSide() == Direction.NORTH
-                    //&& player.isSneaking()
+                    //&& player.isSneaky()
                     && player.getMainHandStack().getItem()== Items.EMERALD
             )
             {
                 entity.drawCard(2,0);
+                entity.drawCard(2,0.2f);
                 entity.setGameState("WAITING_FOR_EAST");
                 player.getMainHandStack().decrement(1);
             }
             else if(entity.gameState.equals("WAITING_FOR_EAST") && hit.getSide() == Direction.EAST)
             {
                 entity.drawCard(false,0);
+                entity.drawCard(false,0.2f);
                 entity.resetCounter();
                 entity.setGameState("START_OR_WEST");
             }
             else if(entity.gameState.equals("START_OR_WEST") && hit.getSide() == Direction.WEST)
             {
                 entity.drawCard(true,0);
+                entity.drawCard(true,0.2f);
                 entity.resetCounter();
                 entity.setGameState("COULD_START");
+            }
+            else if((entity.gameState.equals("START_OR_WEST") || entity.gameState.equals("COULD_START") )
+                    & hit.getSide() == Direction.NORTH)
+            {
+                entity.setGameState("IN_PROGRESS");
+            }
+            if(player.isSneaky() && entity.gameState.equals("IN_PROGRESS"))
+            {
+                switch (hit.getSide())
+                {
+                    case EAST -> entity.drawCard(false,0.4f);
+                    case WEST -> entity.drawCard(true,0.4f);
+                }
             }
 
 

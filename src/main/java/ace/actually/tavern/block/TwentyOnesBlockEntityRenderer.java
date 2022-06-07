@@ -59,7 +59,7 @@ public class TwentyOnesBlockEntityRenderer implements BlockEntityRenderer<Twenty
     public void renderCard(TwentyOnesBlockEntity entity, MatrixStack matrices,NbtCompound compound)
     {
         matrices.push();
-        int offset = compound.getInt("offset");
+        float offset = compound.getFloat("offset");
         int direction = compound.getInt("direction");
         String card = compound.getString("face");
 
@@ -77,7 +77,7 @@ public class TwentyOnesBlockEntityRenderer implements BlockEntityRenderer<Twenty
             }
             else if(direction==2)
             {
-                matrices.translate(0.6,0.5,0);
+                matrices.translate(0.6+offset,0.5,0);
             }
         }
         else
@@ -98,7 +98,7 @@ public class TwentyOnesBlockEntityRenderer implements BlockEntityRenderer<Twenty
             }
             else if(direction==2)
             {
-                matrices.translate(0.6,lerp(0.1,0.5,entity.counter/10f),0);
+                matrices.translate(0.6+offset,lerp(0.1,0.5,entity.counter/10f),0);
                 float up = (float) lerp(1,0,entity.counter/10f)*270;
                 float round = (float) lerp(0,1,entity.counter/10f)*270;
                 matrices.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(up,round,0)));
@@ -120,7 +120,15 @@ public class TwentyOnesBlockEntityRenderer implements BlockEntityRenderer<Twenty
         matrices.translate(1,2,0);
         if(compound.getBoolean("isDrawn"))
         {
-            MinecraftClient.getInstance().textRenderer.draw(matrices,card,1,1,1);
+            if(card.contains("♥") || card.contains("♦"))
+            {
+                MinecraftClient.getInstance().textRenderer.draw(matrices,new LiteralText(card).setStyle(Style.EMPTY.withColor(Formatting.RED)),1,1,1);
+            }
+            else
+            {
+                MinecraftClient.getInstance().textRenderer.draw(matrices,card,1,1,1);
+            }
+
         }
 
 

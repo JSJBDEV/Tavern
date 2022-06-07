@@ -68,6 +68,10 @@ public class BarBlockEntity extends BlockEntity {
         return emeralds;
     }
 
+    public void setEmeralds(int emeralds) {
+        this.emeralds = emeralds;
+    }
+
     public void addEmeralds(int i)
     {
         emeralds+=i;
