@@ -7,6 +7,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
@@ -21,11 +22,13 @@ public class TwentyOnesBlockEntity extends BlockEntity {
     int counter = 0;
     String gameState = "NO_GAME";
     NbtList cards;
+    NbtList players;
 
     public TwentyOnesBlockEntity(BlockPos pos, BlockState state) {
         super(Tavern.TWENTY_ONES_BLOCK_ENTITY, pos, state);
         cards=new NbtList();
         gameState="NO_GAME";
+        players=new NbtList();
     }
 
     @Override
@@ -33,6 +36,7 @@ public class TwentyOnesBlockEntity extends BlockEntity {
         nbt.putInt("counter",counter);
         nbt.put("cards",cards);
         nbt.putString("gamestate",gameState);
+        nbt.put("players",players);
         super.writeNbt(nbt);
 
     }
@@ -43,6 +47,7 @@ public class TwentyOnesBlockEntity extends BlockEntity {
         counter=nbt.getInt("counter");
         cards= (NbtList) nbt.get("cards");
         gameState = nbt.getString("gamestate");
+        players = (NbtList) nbt.get("players");
     }
 
 
@@ -70,48 +75,73 @@ public class TwentyOnesBlockEntity extends BlockEntity {
     }
     public void drawCard(int direction,float offset)
     {
-        counter=0;
-        NbtCompound card = new NbtCompound();
-        card.putBoolean("isDrawn",false);
-        card.putInt("direction",direction);
-
-        card.putFloat("offset",offset);
-        card.putString("face",getRandomCard());
-        cards.add(card);
-        markDirty();
-        world.updateListeners(this.pos,this.getCachedState(),this.getCachedState(), Block.NOTIFY_LISTENERS);
-    }
-
-    public void drawCard(boolean isWest, float offset)
-    {
-
-        counter=0;
-        NbtCompound card = new NbtCompound();
-        card.putBoolean("isDrawn",false);
-        if(isWest)
+        if(getPlayerCards(direction,offset)<22)
         {
-            card.putInt("direction",1);
+            counter=0;
+            NbtCompound card = new NbtCompound();
+            card.putBoolean("isDrawn",false);
+            card.putInt("direction",direction);
+
+            card.putFloat("offset",offset);
+            card.putInt("cards",countCards(direction,offset));
+            card.putString("face",getRandomCard());
+            cards.add(card);
+            markDirty();
+            world.updateListeners(this.pos,this.getCachedState(),this.getCachedState(), Block.NOTIFY_LISTENERS);
         }
         else
         {
-            card.putInt("direction",0);
+            System.out.println("player lost");
         }
-
-        card.putFloat("offset",offset);
-        card.putString("face",getRandomCard());
-        cards.add(card);
-        markDirty();
-        world.updateListeners(this.pos,this.getCachedState(),this.getCachedState(), Block.NOTIFY_LISTENERS);
 
     }
 
-    private void doesDirectionLose(int direction)
+    public void addPlayer(int direction, float offset)
+    {
+        boolean exists = false;
+        for (int i = 0; i < players.size(); i++) {
+            if(players.getString(i).equals(direction+","+offset))
+            {
+                exists=true;
+            }
+        }
+        if(!exists)
+        {
+            players.add(NbtString.of(direction+","+offset));
+            markDirty();
+        }
+
+    }
+
+    public NbtList getPlayers() {
+        return players;
+    }
+
+    public void removePlayer(int direction, float offset)
+    {
+        int r = -1;
+        for (int i = 0; i < players.size(); i++) {
+            if(players.getString(i).equals(direction+","+offset))
+            {
+                r=i;
+            }
+        }
+        if(r!=-1)
+        {
+            players.remove(r);
+        }
+
+    }
+
+
+
+    public int getPlayerCards(int direction, float offset)
     {
         int number = 0;
         for(NbtElement element: cards)
         {
             NbtCompound compound = (NbtCompound) element;
-            if(compound.getInt("direciton")==direction)
+            if(compound.getInt("direction")==direction && compound.getFloat("offset")==offset)
             {
                 String face = compound.getString("face");
                 switch (face.charAt(0))
@@ -130,10 +160,25 @@ public class TwentyOnesBlockEntity extends BlockEntity {
             }
 
         }
-        if(number>21)
+
+
+        return number;
+    }
+
+    public int countCards(int direction, float offset)
+    {
+        int number = 0;
+        for(NbtElement element: cards)
         {
-            setGameState(direction+"_LOST");
+            NbtCompound compound = (NbtCompound) element;
+            if(compound.getInt("direction")==direction && compound.getFloat("offset")==offset)
+            {
+               number++;
+            }
+
         }
+
+        return number;
     }
 
 
@@ -168,6 +213,7 @@ public class TwentyOnesBlockEntity extends BlockEntity {
 
     public void setGameState(String gameState) {
         this.gameState = gameState;
+        System.out.println(gameState);
         markDirty();
         world.updateListeners(this.pos,this.getCachedState(),this.getCachedState(), Block.NOTIFY_LISTENERS);
     }
@@ -177,5 +223,9 @@ public class TwentyOnesBlockEntity extends BlockEntity {
         counter=0;
         markDirty();
         world.updateListeners(this.pos,this.getCachedState(),this.getCachedState(), Block.NOTIFY_LISTENERS);
+    }
+
+    public NbtList getCards() {
+        return cards;
     }
 }

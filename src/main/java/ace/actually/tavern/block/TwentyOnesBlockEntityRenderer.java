@@ -59,8 +59,11 @@ public class TwentyOnesBlockEntityRenderer implements BlockEntityRenderer<Twenty
     public void renderCard(TwentyOnesBlockEntity entity, MatrixStack matrices,NbtCompound compound)
     {
         matrices.push();
-        float offset = compound.getFloat("offset");
+
         int direction = compound.getInt("direction");
+        float offset = compound.getFloat("offset");
+        offset+=compound.getInt("cards")*0.2f;
+
         String card = compound.getString("face");
 
         if(compound.getBoolean("isDrawn"))

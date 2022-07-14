@@ -5,9 +5,14 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -59,57 +64,81 @@ public class TwentyOnesBlock extends BlockWithEntity {
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
 
+        invokeGame(world, pos, hand, hit, player);
+        return ActionResult.PASS;
+    }
 
+    private void invokeGame(World world, BlockPos pos, Hand hand,BlockHitResult hit, PlayerEntity player)
+    {
         if(hand==Hand.MAIN_HAND && !world.isClient)
         {
-
             TwentyOnesBlockEntity entity = (TwentyOnesBlockEntity) world.getBlockEntity(pos);
-            System.out.println(entity.gameState);
             if(
                     entity.gameState.equals("NO_GAME")
-                    && hit.getSide() == Direction.NORTH
-                    //&& player.isSneaky()
-                    && player.getMainHandStack().getItem()== Items.EMERALD
+                            && hit.getSide() == Direction.NORTH
+                            //&& player.isSneaky()
+                            && player.getMainHandStack().getItem()== Items.EMERALD
             )
             {
                 entity.drawCard(2,0);
-                entity.drawCard(2,0.2f);
-                entity.setGameState("WAITING_FOR_EAST");
+                entity.drawCard(2,0);
+                entity.setGameState("PLAYERS_CAN_JOIN");
                 player.getMainHandStack().decrement(1);
             }
-            else if(entity.gameState.equals("WAITING_FOR_EAST") && hit.getSide() == Direction.EAST)
+            else if(player.isSneaky() && entity.gameState.equals("PLAYERS_CAN_JOIN"))
             {
-                entity.drawCard(false,0);
-                entity.drawCard(false,0.2f);
-                entity.resetCounter();
-                entity.setGameState("START_OR_WEST");
+                switch (hit.getSide()) {
+                    case EAST -> entity.addPlayer(0, 0);
+                    case WEST -> entity.addPlayer(1, 0);
+                    case NORTH -> {
+                        for (int i = 0; i < entity.getPlayers().size(); i++) {
+                            String[] cc = entity.getPlayers().getString(i).split(",");
+                            entity.drawCard(Integer.parseInt(cc[0]), Float.parseFloat(cc[1]));
+                            entity.drawCard(Integer.parseInt(cc[0]), Float.parseFloat(cc[1]));
+                        }
+                        entity.setGameState("GAME_START");
+                    }
+                }
             }
-            else if(entity.gameState.equals("START_OR_WEST") && hit.getSide() == Direction.WEST)
-            {
-                entity.drawCard(true,0);
-                entity.drawCard(true,0.2f);
-                entity.resetCounter();
-                entity.setGameState("COULD_START");
-            }
-            else if((entity.gameState.equals("START_OR_WEST") || entity.gameState.equals("COULD_START") )
-                    & hit.getSide() == Direction.NORTH)
-            {
-                entity.setGameState("IN_PROGRESS");
-            }
-            if(player.isSneaky() && entity.gameState.equals("IN_PROGRESS"))
+            else if(entity.gameState.equals("GAME_START"))
             {
                 switch (hit.getSide())
                 {
-                    case EAST -> entity.drawCard(false,0.4f);
-                    case WEST -> entity.drawCard(true,0.4f);
+                    case EAST -> entity.drawCard(0,0);
+                    case WEST -> entity.drawCard(1,0);
+                    case NORTH ->
+                            {
+                                if(player.isSneaky())
+                                {
+                                    entity.setGameState("END_ROUND");
+                                    int winScore = 0;
+                                    String[] winner = null;
+                                    for (int i = 0; i < entity.getPlayers().size(); i++)
+                                    {
+                                        String[] cc = entity.getPlayers().getString(i).split(",");
+                                        int total = entity.getPlayerCards(Integer.parseInt(cc[0]),Float.parseFloat(cc[1]));
+                                        if(total>winScore)
+                                        {
+                                            winner=cc;
+                                            winScore=total;
+                                        }
+                                    }
+                                    //TODO: item entity spawns at players offset/direction postion
+                                    ItemEntity item = new ItemEntity(world,1,1,1,new ItemStack(Items.EMERALD,entity.getPlayers().size()));
+                                    world.spawnEntity(item);
+
+                                    world.setBlockState(pos,Tavern.TWENTY_ONES_BLOCK.getDefaultState());
+                                }
+                                else
+                                {
+                                    entity.drawCard(2,0);
+                                }
+                            }
                 }
+
+
             }
-
-
-
         }
-
-        return super.onUse(state, world, pos, player, hand, hit);
     }
 
     @Nullable
