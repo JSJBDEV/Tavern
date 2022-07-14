@@ -5,6 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
@@ -103,6 +104,40 @@ public class TwentyOnesBlockEntity extends BlockEntity {
         world.updateListeners(this.pos,this.getCachedState(),this.getCachedState(), Block.NOTIFY_LISTENERS);
 
     }
+
+    private void doesDirectionLose(int direction)
+    {
+        int number = 0;
+        for(NbtElement element: cards)
+        {
+            NbtCompound compound = (NbtCompound) element;
+            if(compound.getInt("direciton")==direction)
+            {
+                String face = compound.getString("face");
+                switch (face.charAt(0))
+                {
+                    case 'A' -> number+=1;
+                    case '2' -> number+=2;
+                    case '3' -> number+=3;
+                    case '4' -> number+=4;
+                    case '5' -> number+=5;
+                    case '6' -> number+=6;
+                    case '7' -> number+=7;
+                    case '8' -> number+=8;
+                    case '9' -> number+=9;
+                    case 'J', 'Q', 'K' -> number+=10;
+                }
+            }
+
+        }
+        if(number>21)
+        {
+            setGameState(direction+"_LOST");
+        }
+    }
+
+
+
     private static final String[] numbers = {"A","2","3","4","5","6","7","8","9","J","Q","K"};
     private static final String[] suites = {"♠","♥","♦","♣"};
     private static String getRandomCard()

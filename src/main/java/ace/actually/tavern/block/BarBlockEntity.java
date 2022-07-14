@@ -18,9 +18,11 @@ public class BarBlockEntity extends BlockEntity {
     private boolean hasDrink = false;
     private int emeralds = 0;
     private String brew = "";
+    private String tavern = "";
     public BarBlockEntity(BlockPos pos, BlockState state) {
         super(Tavern.BAR_BLOCK_ENTITY, pos, state);
         brew= NameGenerator.genAlcohol();
+        tavern="default";
     }
 
     @Override
@@ -28,6 +30,7 @@ public class BarBlockEntity extends BlockEntity {
         nbt.putBoolean("has_drink",hasDrink);
         nbt.putInt("emeralds",emeralds);
         nbt.putString("brew",brew);
+        nbt.putString("tavern",tavern);
         super.writeNbt(nbt);
 
     }
@@ -38,6 +41,7 @@ public class BarBlockEntity extends BlockEntity {
         hasDrink=nbt.getBoolean("has_drink");
         emeralds=nbt.getInt("emeralds");
         brew=nbt.getString("brew");
+        tavern=nbt.getString("tavern");
     }
 
     @Nullable
@@ -68,8 +72,13 @@ public class BarBlockEntity extends BlockEntity {
         return emeralds;
     }
 
+    public String getTavern() {
+        return tavern;
+    }
+
     public void setEmeralds(int emeralds) {
         this.emeralds = emeralds;
+        markDirty();
     }
 
     public void addEmeralds(int i)

@@ -223,7 +223,7 @@ public class NameGenerator {
             "well-integrated",
             "well-structured"};
 
-    private static String[] alcohol = {"beer","lager","whiskey","mead","pochean","stout","brew"};
+
 
     public static String genName()
     {
@@ -234,9 +234,16 @@ public class NameGenerator {
         return firstNameMale[RandomUtils.nextInt(0,firstNameMale.length)]+" "+lastName[RandomUtils.nextInt(0,lastName.length)];
     }
 
+    private static String[] alcohol = {"beer","lager","whiskey","mead","pochean","stout","brew"};
     public static String genAlcohol()
     {
         return genName()+"'s "+alcoholAdjectives[RandomUtils.nextInt(0,alcoholAdjectives.length)]+" "+alcohol[RandomUtils.nextInt(0,alcohol.length)];
+    }
+
+    private static String[] taverns = {"Pub","Inn","Tavern"};
+    public static String genTavern()
+    {
+        return genName()+"'s "+taverns[RandomUtils.nextInt(0,taverns.length)];
     }
 
 }

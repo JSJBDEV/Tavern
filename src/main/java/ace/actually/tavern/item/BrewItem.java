@@ -2,12 +2,19 @@ package ace.actually.tavern.item;
 
 import ace.actually.tavern.Tavern;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffectUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
+
+import java.math.BigInteger;
+import java.util.Random;
 
 public class BrewItem extends Item {
     public BrewItem(Settings settings) {
@@ -33,9 +40,20 @@ public class BrewItem extends Item {
         }
 
         if (!world.isClient) {
-            user.clearStatusEffects();
+            addEffectsFromName(user,stack.getName().getString());
         }
 
         return new ItemStack(Tavern.MUG_ITEM);
+    }
+
+
+    public void addEffectsFromName(LivingEntity user,String name)
+    {
+       int seed = new BigInteger(name.getBytes()).intValue();
+       Random random = new Random(seed);
+
+        for (int i = 0; i < random.nextInt(5); i++) {
+            user.addStatusEffect(new StatusEffectInstance(StatusEffect.byRawId(random.nextInt(20)),random.nextInt(1000),random.nextInt(3)));
+        }
     }
 }

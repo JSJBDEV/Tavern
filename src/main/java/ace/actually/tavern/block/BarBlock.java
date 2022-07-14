@@ -32,27 +32,37 @@ public class BarBlock extends Block implements BlockEntityProvider {
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
 
-        if(hand.equals(Hand.MAIN_HAND))
+        if(hand.equals(Hand.MAIN_HAND) && !world.isClient)
         {
 
             BarBlockEntity barBlockEntity = (BarBlockEntity) world.getBlockEntity(pos);
-            if(!barBlockEntity.hasDrink() && player.getScoreboardTags().contains(barBlockEntity.getBrew()))
+            if(!barBlockEntity.hasDrink())
             {
-                if(player.isSneaking())
+                if(player.getScoreboardTags().contains(barBlockEntity.getTavern()))
                 {
-                    while (barBlockEntity.getEmeralds()>64)
+
+                    if(player.isSneaking())
                     {
-                        player.giveItemStack(new ItemStack(Items.EMERALD,64));
-                        barBlockEntity.setEmeralds(barBlockEntity.getEmeralds()-64);
+                        while (barBlockEntity.getEmeralds()>64)
+                        {
+                            player.giveItemStack(new ItemStack(Items.EMERALD,64));
+                            barBlockEntity.setEmeralds(barBlockEntity.getEmeralds()-64);
+                        }
+                        if(barBlockEntity.getEmeralds()>0)
+                        {
+                            player.giveItemStack(new ItemStack(Items.EMERALD,barBlockEntity.getEmeralds()));
+                            barBlockEntity.setEmeralds(0);
+                        }
+
                     }
-                    if(barBlockEntity.getEmeralds()>0)
+                    else
                     {
-                        player.giveItemStack(new ItemStack(Items.EMERALD,barBlockEntity.getEmeralds()));
-                        barBlockEntity.setEmeralds(0);
+                        barBlockEntity.setHasDrink(true);
                     }
 
                 }
-                barBlockEntity.setHasDrink(true);
+
+
             }
             else
             {
@@ -63,7 +73,9 @@ public class BarBlock extends Block implements BlockEntityProvider {
                         barBlockEntity.addEmeralds(1);
                         ItemStack brew = new ItemStack(Tavern.BEER_BREW);
                         brew.setCustomName(new LiteralText(barBlockEntity.getBrew()));
+
                         player.giveItemStack(brew);
+                        barBlockEntity.setHasDrink(false);
                         break;
                     }
                 }
