@@ -24,6 +24,7 @@ public class TwentyOnesBlockEntity extends BlockEntity {
     NbtList cards;
     NbtList players;
 
+
     public TwentyOnesBlockEntity(BlockPos pos, BlockState state) {
         super(Tavern.TWENTY_ONES_BLOCK_ENTITY, pos, state);
         cards=new NbtList();

@@ -117,14 +117,15 @@ public class TwentyOnesBlock extends BlockWithEntity {
                                     {
                                         String[] cc = entity.getPlayers().getString(i).split(",");
                                         int total = entity.getPlayerCards(Integer.parseInt(cc[0]),Float.parseFloat(cc[1]));
-                                        if(total>winScore)
+                                        if(total>winScore && total<22)
                                         {
                                             winner=cc;
                                             winScore=total;
                                         }
                                     }
-                                    //TODO: item entity spawns at players offset/direction postion
-                                    ItemEntity item = new ItemEntity(world,1,1,1,new ItemStack(Items.EMERALD,entity.getPlayers().size()));
+                                    //TODO: item entity spawns at players offset/direction position
+
+                                    ItemEntity item = new ItemEntity(world,pos.getX(),pos.getY()+1,pos.getZ()+Float.parseFloat(winner[1]),new ItemStack(Items.EMERALD,entity.getPlayers().size()));
                                     world.spawnEntity(item);
 
                                     world.setBlockState(pos,Tavern.TWENTY_ONES_BLOCK.getDefaultState());

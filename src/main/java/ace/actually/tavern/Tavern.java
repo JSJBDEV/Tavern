@@ -1,9 +1,6 @@
 package ace.actually.tavern;
 
-import ace.actually.tavern.block.BarBlock;
-import ace.actually.tavern.block.BarBlockEntity;
-import ace.actually.tavern.block.TwentyOnesBlock;
-import ace.actually.tavern.block.TwentyOnesBlockEntity;
+import ace.actually.tavern.block.*;
 import ace.actually.tavern.item.BrewItem;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -14,10 +11,16 @@ import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.structure.Structure;
+import net.minecraft.structure.StructurePlacementData;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Random;
 
 public class Tavern implements ModInitializer {
 	// This logger is used to write text to the console and the log file.
@@ -48,11 +51,13 @@ public class Tavern implements ModInitializer {
 
 	public static final BarBlock BAR_BLOCK = new BarBlock(AbstractBlock.Settings.of(Material.BAMBOO));
 	public static final TwentyOnesBlock TWENTY_ONES_BLOCK = new TwentyOnesBlock(AbstractBlock.Settings.of(Material.BAMBOO));
+	public static final PortATavernBlock PORT_A_TAVERN_BLOCK = new PortATavernBlock(AbstractBlock.Settings.of(Material.BAMBOO));
 
 	private void registerBlocks()
 	{
 		Registry.register(Registry.BLOCK,new Identifier("tavern","bar_block"),BAR_BLOCK);
 		Registry.register(Registry.BLOCK,new Identifier("tavern","twenty_ones_block"),TWENTY_ONES_BLOCK);
+		Registry.register(Registry.BLOCK,new Identifier("tavern","port_a_tavern"),PORT_A_TAVERN_BLOCK);
 	}
 
 	public static BlockEntityType<BarBlockEntity> BAR_BLOCK_ENTITY;
@@ -61,5 +66,30 @@ public class Tavern implements ModInitializer {
 	{
 		BAR_BLOCK_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE,"tavern:bar_block_entity", FabricBlockEntityTypeBuilder.create(BarBlockEntity::new,BAR_BLOCK).build(null));
 		TWENTY_ONES_BLOCK_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE,"tavern:twenty_ones_entity", FabricBlockEntityTypeBuilder.create(TwentyOnesBlockEntity::new,TWENTY_ONES_BLOCK).build(null));
+	}
+
+	//the basic structure spawning code, loads from data/tavern/structures/ can load any .nbt file saved with a
+	//structure block, and probably anything else in that format
+	public static void spawnStructure(ServerWorld world, BlockPos pos, String name)
+	{
+		net.minecraft.structure.StructureManager manager = world.getStructureManager();
+		Identifier load;
+		if(name.contains(":"))
+		{
+			String[] id = name.split(":");
+			load = new Identifier(id[0],id[1]);
+		}else
+		{
+			load = new Identifier("tavern",name);
+		}
+
+
+		Structure structure = manager.getStructure(load).get();
+		StructurePlacementData data = new StructurePlacementData().setIgnoreEntities(false);
+
+
+		structure.place(world,pos,pos,data, world.random, 2);
+
+
 	}
 }

@@ -4,6 +4,7 @@
   "package": "ace.actually.tavern.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "PlacedFeatureMixin"
   ],
   "client": [
     "ExampleMixin"
